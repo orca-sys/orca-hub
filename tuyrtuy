@@ -1,0 +1,52 @@
+-- Executor-friendly GUI loading bar (6 minutes)
+
+-- Safely get LocalPlayer
+local lp = game:GetService("Players").LocalPlayer
+repeat task.wait() until lp and lp:FindFirstChild("PlayerGui")
+local gui = Instance.new("ScreenGui")
+gui.Name = "LoadingGUI"
+gui.ResetOnSpawn = false
+gui.Parent = lp:WaitForChild("PlayerGui")
+
+-- Frame
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 300, 0, 100)
+frame.Position = UDim2.new(0.5, -150, 0.5, -50)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
+
+-- Progress bar background
+local progressBarBG = Instance.new("Frame", frame)
+progressBarBG.Size = UDim2.new(1, -20, 0, 20)
+progressBarBG.Position = UDim2.new(0, 10, 0.5, 10)
+progressBarBG.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+progressBarBG.BorderSizePixel = 0
+
+-- Progress bar fill
+local progressBar = Instance.new("Frame", progressBarBG)
+progressBar.Size = UDim2.new(0, 0, 1, 0)
+progressBar.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+progressBar.BorderSizePixel = 0
+
+-- Text label
+local label = Instance.new("TextLabel", frame)
+label.Size = UDim2.new(1, 0, 0, 30)
+label.Position = UDim2.new(0, 0, 0, 10)
+label.BackgroundTransparency = 1
+label.TextColor3 = Color3.fromRGB(255, 255, 255)
+label.Font = Enum.Font.SourceSansBold
+label.TextScaled = true
+label.Text = "Loading Script... 0%"
+
+-- Loading simulation (6 minutes total)
+task.spawn(function()
+    for i = 1, 100 do
+        task.wait(3.6) -- 3.6s * 100 = 6 minutes
+        progressBar.Size = UDim2.new(i / 100, 0, 1, 0)
+        label.Text = "Loading Script... " .. i .. "%"
+    end
+
+    -- Destroy GUI after
+    task.wait(1)
+    gui:Destroy()
+end)
